@@ -9,3 +9,9 @@ export type HistoryDateTypes = {
     amount: number;
     transferType: TransferType;
 }
+
+export type UserInfo = {
+    name: string;
+    accountBalance: number;
+    accountNumber: string;
+}

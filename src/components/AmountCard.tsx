@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { amountDisplayFormatter } from '../utils/amount';
+import { amountDisplayFormatter } from '../utils/number';
 
 type AmountCardProps = {
     amount: number;

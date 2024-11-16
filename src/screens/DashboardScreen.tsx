@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, SafeAreaView, View } from 'react-native';
 import AmountCard from '../components/AmountCard';
 import QuickButton from '../components/QuickButton';
@@ -6,11 +6,19 @@ import { useNavigation } from '@react-navigation/native';
 import Routes from '../navigation/routes';
 import { FlashList } from '@shopify/flash-list';
 import { HistoryDateTypes, TransferType } from '../constants/types';
-import { amountDisplayFormatter } from '../utils/amount';
+import { accountNumberFormatter, amountDisplayFormatter } from '../utils/number';
+import useUserStore from '../stores/userStores';
 // import { TransferType } from '../constants/types';
+
+const HISTORY_ITEM_SIZE = 62;
 
 const DashboardScreen = () => {
     const navigation = useNavigation();
+    const {setUserInfo, userInfo} = useUserStore();
+
+    useEffect(() => {
+        setUserInfo({name: "Keat", accountBalance: 2233, accountNumber: "111122223333"})
+    }, []);
 
     const onPressTransfer = () => {
         navigation.navigate(Routes.PAYMENT_SCREEN, {});
@@ -58,9 +66,9 @@ const DashboardScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
-                <Text style={styles.title}>{"Yo, Keat"}</Text>
+                <Text style={styles.title}>{`Yo, ${userInfo?.name}`}</Text>
 
-                <AmountCard amount={20004} accountNumber='1122 3333 4444' />
+                <AmountCard amount={userInfo?.accountBalance} accountNumber={accountNumberFormatter(userInfo?.accountNumber)} />
                 <View style={styles.quickButtonContainer}>
                     <QuickButton icon={require('./../assets/payment.png')} text='Transfer' onPress={onPressTransfer} />
                 </View>
@@ -71,6 +79,7 @@ const DashboardScreen = () => {
                 data={mockHistoryData}
                 renderItem={renderHistoryItem}
                 style={styles.list}
+                estimatedItemSize={HISTORY_ITEM_SIZE}
                 contentContainerStyle={styles.listContentContainer}
             />
 
