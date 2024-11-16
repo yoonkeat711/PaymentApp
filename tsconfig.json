@@ -1,0 +1,14 @@
+{
+  "extends": "@react-native/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "react-native",
+    "moduleResolution": "node16",
+    "module": "Node16",
+    "resolveJsonModule": true
+  }
+}
