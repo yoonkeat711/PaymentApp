@@ -9,7 +9,7 @@ import {
 
 import Routes from './src/navigation/routes';
 import DashboardScreen from './src/screens/DashboardScreen';
-import PaymentScreen from './src/screens/PaymentScreen';
+import PaymentScreen, { PaymentScreenParams } from './src/screens/PaymentScreen';
 import SecureValidateScreen, { SecureValidateScreenParams } from './src/screens/SecureValidateScreen';
 import 'react-native-gesture-handler';
 import useUserStore from './src/stores/userStores';
@@ -17,7 +17,7 @@ import useUserStore from './src/stores/userStores';
 
 export type AppStackNavigatorParams = {
   [Routes.DASHBOARD_SCREEN]: undefined;
-  [Routes.PAYMENT_SCREEN]: undefined;
+  [Routes.PAYMENT_SCREEN]: PaymentScreenParams;
   [Routes.SECURE_VALIDATE_SCREEN]: SecureValidateScreenParams;
 };
 
@@ -25,6 +25,12 @@ export interface SecureValidateScreenProps {
   navigation: StackNavigationProp<AppStackNavigatorParams, Routes.SECURE_VALIDATE_SCREEN>;
   route: RouteProp<AppStackNavigatorParams, Routes.SECURE_VALIDATE_SCREEN>;
 }
+
+export interface PaymentScreenProps {
+  navigation: StackNavigationProp<AppStackNavigatorParams, Routes.PAYMENT_SCREEN>;
+  route: RouteProp<AppStackNavigatorParams, Routes.PAYMENT_SCREEN>;
+}
+
 const Stack = createStackNavigator<AppStackNavigatorParams>();
 
 function App(): React.JSX.Element {

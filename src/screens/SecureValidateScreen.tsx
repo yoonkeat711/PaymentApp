@@ -66,7 +66,7 @@ const SecureValidateScreen = ({ route }: SecureValidateScreenProps) => {
                     onChange={onChange}
                 >
                     <BottomSheetView style={styles.contentContainer}>
-                        <Text style={{ fontWeight: '500', fontSize: 24 }}>{statusText}</Text>
+                        <Text style={styles.statusText}>{statusText}</Text>
                         <CTAButton text='Done' onPress={onPressDone} isEnabled />
                     </BottomSheetView>
                 </BottomSheetModal>
@@ -94,6 +94,10 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         resizeMode: 'contain'
+    },
+    statusText: {
+        fontWeight: '500',
+        fontSize: 24
     }
 })
 

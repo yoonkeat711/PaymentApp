@@ -23,17 +23,30 @@ const DashboardScreen = () => {
     const { transactionHistories } = useHistoryStore();
 
     const onPressTransfer = () => {
-        navigation.navigate(Routes.PAYMENT_SCREEN);
+        navigation.navigate(Routes.PAYMENT_SCREEN, {});
+    }
+
+    const onPressQuickTransfer = (data: HistoryDateTypes) => {
+        navigation.navigate(Routes.PAYMENT_SCREEN, {
+            accountNumber: String(data?.accountNumber),
+        });
+
     }
 
     const renderHistoryItem = ({ item }: { item: HistoryDateTypes }) => {
         return (
             <View style={styles.historyContainer}>
-                <Text style={styles.transactionDate}>{moment(item?.date).format("DD MMM YYYY")}</Text>
-                <View style={styles.transactionDetail}>
+                <View style={{ justifyContent: 'space-between' }}>
+                    <Text style={styles.transactionDate}>{moment(item?.date).format("DD MMM YYYY")}</Text>
                     <Text style={styles.transactionListTitle}>{item?.title}</Text>
-                    <Text style={[styles.transactionAmount, { color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
                 </View>
+                <View style={{ flexDirection: "row" }}>
+                    <Text style={[styles.transactionAmount, { color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
+
+                    <QuickButton icon={require('./../assets/payment.png')} onPress={() => onPressQuickTransfer(item)} />
+
+                </View>
+
             </View>
         )
     }
@@ -76,7 +89,11 @@ const styles = StyleSheet.create({
         fontWeight: '500'
     },
     historyContainer: {
+        backgroundColor: "#f0f0f0",
         paddingTop: 12,
+        flexDirection: "row",
+        flex: 1,
+        justifyContent: "space-between",
         borderBottomColor: 'grey',
         borderBottomWidth: 1,
         paddingBottom: 8
@@ -100,14 +117,10 @@ const styles = StyleSheet.create({
     transactionListTitle: {
         fontWeight: '500', fontSize: 16
     },
-    transactionDetail: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingTop: 4
-    },
     transactionAmount: {
         fontWeight: '500',
         fontSize: 16,
+        alignSelf: "flex-end",
     },
     emptyContainer: {
         alignItems: 'center',

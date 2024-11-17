@@ -1,5 +1,5 @@
 const COLORS = {
-    PRIMARY: '#89CFF0',
+    PRIMARY: '#009CFF',
     DISABLED: "#808080",
 };
 
