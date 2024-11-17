@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, KeyboardAvoidingView } from 'react-native';
 import InputField from '../components/InputField';
 import AmountCard from '../components/AmountCard';
 import useUserStore from '../stores/userStores';
 import * as Yup from 'yup';
 import COLORS from '../constants/colors';
+import DropDownField from '../components/DropDownField';
 
 const PaymentScreen = () => {
     const { userInfo } = useUserStore();
     const [amount, setAmount] = useState<string>('');
+    const [accountNumber, setAccountNumber] = useState<string>('');
+    const [note, setNote] = useState<string>('');
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
     console.log(userInfo?.accountBalance, 'account blanace');
 
@@ -26,26 +29,50 @@ const PaymentScreen = () => {
         );
 
     const onPressTransfer = () => {
-
+console.log("Jere");
     };
+
+    useEffect(() => {
+        if (amount && accountNumber) {
+            setIsButtonEnabled(true);
+        } else {
+            setIsButtonEnabled(false);
+        }
+    }, [amount, accountNumber])
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <View style={styles.topContainer}>
+                <ScrollView style={styles.topContainer}>
                     <Text style={styles.title}>Transfer</Text>
-                    <AmountCard accountNumber={userInfo?.accountNumber} amount={userInfo?.accountBalance} />
-                    <InputField title='Amount'
-                        value={String(amount)}
-                        setValue={(val) => setAmount(val)}
-                        validationSchema={amountValidationScheme}
-                        inputType='amount'
-                        placeholder='Please enter amount'
-                    />
-                </View>
+                    <KeyboardAvoidingView behavior='position'>
+                        <AmountCard accountNumber={userInfo?.accountNumber} amount={userInfo?.accountBalance} />
+                        <InputField title='Amount'
+                            value={amount}
+                            setValue={(val) => setAmount(val)}
+                            validationSchema={amountValidationScheme}
+                            inputType='amount'
+                            placeholder='Enter amount'
+                        />
+                        <InputField title='Account number'
+                            value={accountNumber}
+                            setValue={(val) => setAccountNumber(val)}
+                            inputType='number'
+                            placeholder='Enter account number'
+                        />
+                        <InputField title='Note (optional)'
+                            value={note}
+                            setValue={(val) => setNote(val)}
+                            inputType='string'
+                            placeholder='Enter note (optional)'
+                        />
+                    </KeyboardAvoidingView>
+
+                    {/* <DropDownField title="Transfer type" value='' placeholder='Select transfer type' options={[{ title: "Mobile number", value: "mobileNumber"}, { title: "Account number", value: "accountNumber" }]}  /> */}
+                </ScrollView>
             </TouchableWithoutFeedback>
 
-            <Pressable onPress={onPressTransfer} style={styles.buttonContainer} disabled={!isButtonEnabled}>
+            <Pressable onPress={onPressTransfer} style={[styles.buttonContainer, { backgroundColor: isButtonEnabled ? COLORS.PRIMARY : COLORS.DISABLED }]} disabled={!isButtonEnabled}>
                 <Text style={styles.buttonText}>Transfer</Text>
             </Pressable>
         </SafeAreaView>
@@ -74,7 +101,8 @@ const styles = StyleSheet.create({
     },
     topContainer: {
         padding: 24,
-        flex: 1
+        flex: 1,
+        marginBottom: 20,
     }
 
 })

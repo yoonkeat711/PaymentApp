@@ -57,7 +57,7 @@ const DashboardScreen = () => {
                 <Text style={styles.transactionDate}>{item?.date}</Text>
                 <View style={styles.transactionDetail}>
                     <Text style={styles.transactionListTitle}>{item?.title}</Text>
-                    <Text style={[styles.transactionAmount ,{color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{amountDisplayFormatter(item?.amount)}</Text>
+                    <Text style={[styles.transactionAmount ,{color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
                 </View>
             </View>
         )

@@ -17,7 +17,7 @@ const InputField = ({ title, value, validationSchema, inputType, setValue, place
     const keyboardType = () => {
         switch (inputType) {
             case 'string': return 'default';
-            case 'number': return 'numeric';
+            case 'number': return 'number-pad';
             case 'amount': return 'decimal-pad';
             default: return 'default';
         }
@@ -68,7 +68,9 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "500",
-        fontSize: 24
+        fontSize: 24,
+        paddingTop: 15,
+        paddingBottom: 5,
     },
     errorMessage: {
         color: 'red',
