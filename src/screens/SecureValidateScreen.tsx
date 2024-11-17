@@ -60,7 +60,6 @@ const SecureValidateScreen = ({ route, navigation }: SecureValidateScreenProps) 
     const onPressDone = () => {
         if (validateResult?.success) {
             onSuccess && onSuccess();
-
         } else {
             onFailed && onFailed();
         }
