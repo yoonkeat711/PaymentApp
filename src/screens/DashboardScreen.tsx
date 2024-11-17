@@ -8,48 +8,50 @@ import { FlashList } from '@shopify/flash-list';
 import { HistoryDateTypes, TransferType } from '../constants/types';
 import { amountDisplayFormatter } from '../utils/number';
 import useUserStore from '../stores/userStores';
+import useHistoryStore from '../stores/historyStores';
 // import { TransferType } from '../constants/types';
 
 const HISTORY_ITEM_SIZE = 62;
 
 const DashboardScreen = () => {
     const navigation = useNavigation();
-    const {setUserInfo, userInfo} = useUserStore();
+    const { setUserInfo, userInfo } = useUserStore();
+    const { transactionHistories } = useHistoryStore();
 
     useEffect(() => {
-        setUserInfo({name: "Keat", accountBalance: 2233, accountNumber: "111122223333"})
+        setUserInfo({ name: "Keat", accountBalance: 2233, accountNumber: "111122223333" })
     }, []);
 
     const onPressTransfer = () => {
         navigation.navigate(Routes.PAYMENT_SCREEN, {});
     }
 
-    const mockHistoryData: HistoryDateTypes[] = [
-        {
-            date: "16 Nov 2022",
-            title: "Transfer 1",
-            amount: 200,
-            transferType: TransferType.CREDIT,
-        },
-        {
-            date: "14 Nov 2022",
-            title: "Transfer 2",
-            amount: 400,
-            transferType: TransferType.DEBIT,
-        },
-        {
-            date: "14 Nov 2022",
-            title: "Transfer 2",
-            amount: 400,
-            transferType: TransferType.DEBIT,
-        },
-        {
-            date: "14 Nov 2022",
-            title: "Transfer 2",
-            amount: 400,
-            transferType: TransferType.DEBIT,
-        },
-    ];
+    // const mockHistoryData: HistoryDateTypes[] = [
+    //     {
+    //         date: "16 Nov 2022",
+    //         title: "Transfer 1",
+    //         amount: 200,
+    //         transferType: TransferType.CREDIT,
+    //     },
+    //     {
+    //         date: "14 Nov 2022",
+    //         title: "Transfer 2",
+    //         amount: 400,
+    //         transferType: TransferType.DEBIT,
+    //     },
+    //     {
+    //         date: "14 Nov 2022",
+    //         title: "Transfer 2",
+    //         amount: 400,
+    //         transferType: TransferType.DEBIT,
+    //     },
+    //     {
+    //         date: "14 Nov 2022",
+    //         title: "Transfer 2",
+    //         amount: 400,
+    //         transferType: TransferType.DEBIT,
+    //     },
+    // ];
 
     const renderHistoryItem = ({ item }: { item: HistoryDateTypes }) => {
         return (
@@ -57,7 +59,7 @@ const DashboardScreen = () => {
                 <Text style={styles.transactionDate}>{item?.date}</Text>
                 <View style={styles.transactionDetail}>
                     <Text style={styles.transactionListTitle}>{item?.title}</Text>
-                    <Text style={[styles.transactionAmount ,{color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
+                    <Text style={[styles.transactionAmount, { color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
                 </View>
             </View>
         )
@@ -76,7 +78,8 @@ const DashboardScreen = () => {
             <Text style={styles.transactionTitle}>Transaction History</Text>
 
             <FlashList
-                data={mockHistoryData}
+                data={transactionHistories}
+                ListEmptyComponent={<View style={styles.emptyContainer}><Text>No result found.</Text></View>}
                 renderItem={renderHistoryItem}
                 style={styles.list}
                 estimatedItemSize={HISTORY_ITEM_SIZE}
@@ -136,6 +139,11 @@ const styles = StyleSheet.create({
     transactionAmount: {
         fontWeight: '500',
         fontSize: 16,
+    },
+    emptyContainer: {
+        alignItems: 'center',
+        height: 300,
+        justifyContent: 'center'
     }
 
 })

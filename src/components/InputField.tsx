@@ -9,9 +9,10 @@ type InputFieldProps = {
     value: string;
     setValue: (val: string) => void;
     validationSchema?: Yup.AnySchema<any> | undefined;
+    onError?: (val: boolean) => void;
 
 }
-const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder }: InputFieldProps) => {
+const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder, onError }: InputFieldProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     const keyboardType = () => {
@@ -33,12 +34,15 @@ const InputField = ({ title, value, validationSchema, inputType, setValue, place
         try {
             setErrorMessage('');
             await validationSchema?.validate(value);
+            onError && onError(false);
         } catch (error: unknown) {
             if (error instanceof Yup.ValidationError) {
                 setErrorMessage(error?.message);
+                onError && onError(true);
             }
             else {
                 setErrorMessage("Unknown error");
+                onError && onError(true);
             }
 
         }
@@ -68,7 +72,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: "500",
-        fontSize: 24,
+        fontSize: 18,
         paddingTop: 15,
         paddingBottom: 5,
     },

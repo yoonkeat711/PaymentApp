@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, KeyboardAvoidingView } from 'react-native';
+import { Keyboard, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, Image, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import InputField from '../components/InputField';
 import AmountCard from '../components/AmountCard';
 import useUserStore from '../stores/userStores';
 import * as Yup from 'yup';
 import COLORS from '../constants/colors';
 import DropDownField from '../components/DropDownField';
+import { useNavigation } from '@react-navigation/native';
 
 const PaymentScreen = () => {
     const { userInfo } = useUserStore();
     const [amount, setAmount] = useState<string>('');
+    const [isAmountError, setIsAmountEror] = useState<boolean>(false);
     const [accountNumber, setAccountNumber] = useState<string>('');
     const [note, setNote] = useState<string>('');
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
-    console.log(userInfo?.accountBalance, 'account blanace');
+    const navigation = useNavigation();
 
     const amountValidationScheme = Yup.string()
         .required('Amount is required.')
@@ -29,11 +31,10 @@ const PaymentScreen = () => {
         );
 
     const onPressTransfer = () => {
-console.log("Jere");
     };
 
     useEffect(() => {
-        if (amount && accountNumber) {
+        if (amount && accountNumber && !isAmountError) {
             setIsButtonEnabled(true);
         } else {
             setIsButtonEnabled(false);
@@ -42,6 +43,9 @@ console.log("Jere");
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            <TouchableOpacity onPress={()=> navigation.goBack()}>
+            <Image source={require('./../assets/arrowLeft.png')} style={styles.backButton} />
+            </TouchableOpacity>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <ScrollView style={styles.topContainer}>
                     <Text style={styles.title}>Transfer</Text>
@@ -53,6 +57,7 @@ console.log("Jere");
                             validationSchema={amountValidationScheme}
                             inputType='amount'
                             placeholder='Enter amount'
+                            onError={(val) => setIsAmountEror(val)}
                         />
                         <InputField title='Account number'
                             value={accountNumber}
@@ -103,6 +108,9 @@ const styles = StyleSheet.create({
         padding: 24,
         flex: 1,
         marginBottom: 20,
+    },
+    backButton: {
+        resizeMode: 'contain', margin: 10
     }
 
 })

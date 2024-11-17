@@ -7,6 +7,7 @@ export type HistoryDateTypes = {
     date: string;
     title: string;
     amount: number;
+    accountNumber: number;
     transferType: TransferType;
 }
 

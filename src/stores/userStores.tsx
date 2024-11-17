@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { UserInfo } from '../constants/types';
 
-type userStoreType = {
+type UserStoreType = {
    readonly userInfo: UserInfo,
     setUserInfo: (val: UserInfo) => void;
 };
 
-const useUserStore = create<userStoreType>((set) => {
+const useUserStore = create<UserStoreType>((set) => {
     return {
         userInfo: {
             name: "",
