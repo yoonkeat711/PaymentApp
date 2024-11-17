@@ -11,6 +11,9 @@ import useHistoryStore from '../stores/historyStores';
 import { TransferType } from '../constants/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AppStackNavigatorParams, PaymentScreenProps } from '../../App';
+import payment from '../services/payment';
+import { amountDisplayFormatter } from '../utils/number';
+import moment from 'moment';
 
 
 export type PaymentScreenParams = {
@@ -49,6 +52,20 @@ const PaymentScreen = ({ route }: PaymentScreenProps) => {
             onApiCall: onFetchPayment,
             onSuccess: onSuccessTransfer,
             onFailed: onFailedTransfer,
+            displayData: [
+                {
+                    label: "Amount",
+                    value: amountDisplayFormatter(parseFloat(amount))
+                },
+                {
+                    label: "Receipient Account",
+                    value: accountNumber,
+                },
+                {
+                    label: "Transaction Date",
+                    value: moment(new Date()).format("DD MMM YYYY"),
+                },
+            ],
         });
     };
 
@@ -66,14 +83,15 @@ const PaymentScreen = ({ route }: PaymentScreenProps) => {
             accountNumber: Number(accountNumber),
             transferType: TransferType.DEBIT,
         });
-        navigation.navigate(Routes.DASHBOARD_SCREEN);
     }
 
     const onFailedTransfer = () => {
         navigation.navigate(Routes.DASHBOARD_SCREEN);
     };
 
-    const onFetchPayment = () => { }
+    const onFetchPayment = async () => {
+        await payment.fetchPaymentService(parseFloat(amount), accountNumber);
+    }
 
     useEffect(() => {
         if (amount && accountNumber && !isAmountError) {

@@ -45,4 +45,7 @@ This is one way to run your app — you can also run it directly from within And
 - Break screen into component so that some component could be reuse in other screen.
 
 ### Challenges
-- Not enough time, 3 days given, Friday got the assesment, Sat afternoon starts the development, maybe I am not efficient
+- Not little more time, 3 days given, Friday got the assesment, Sat afternoon starts the development, maybe I am not efficient and should start even earlier
+
+### Video
+

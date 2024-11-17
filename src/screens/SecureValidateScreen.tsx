@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Image, Pressable, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Image, Pressable, SafeAreaView, StyleSheet, Text } from 'react-native';
 import useValidation, { BiometricAuthFailedResult } from '../hooks/useValidation';
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import CTAButton from '../components/CTAButton';
@@ -7,17 +7,23 @@ import InputField from '../components/InputField';
 import { SecureValidateScreenProps } from '../../App';
 import Routes from '../navigation/routes';
 
+
+type DisplaData = {
+    label: string;
+    value: string;
+}
 export type SecureValidateScreenParams = {
-    onApiCall: () => void;
+    onApiCall: () => Promise<any>;
     onSuccess: () => void;
     onFailed: () => void;
+    displayData: DisplaData[];
 };
 
 const SecureValidateScreen = ({ route, navigation }: SecureValidateScreenProps) => {
-    const { onApiCall, onSuccess, onFailed } = route?.params;
+    const { onApiCall, onSuccess, onFailed, displayData } = route?.params;
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [pin, setPin] = useState<string>('');
-    const [statusText, setStatusText] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { triggerBiometric, validateResult } = useValidation();
 
@@ -27,55 +33,57 @@ const SecureValidateScreen = ({ route, navigation }: SecureValidateScreenProps) 
 
     const onSuccessNavigate = () => {
         navigation.navigate(Routes.SUCCESS_TRANSFER_SCREEN, {
-            amount: '12121',
-            accountNumber: '3',
-            date: new Date(),
+            displayData: displayData,
         })
+    }
+
+    const onFetchService = async () => {
+        try {
+            setIsLoading(true);
+            await onApiCall();
+            setIsLoading(false);
+            onSuccessNavigate();
+            onSuccess && onSuccess();
+        } catch (error) {
+            bottomSheetModalRef.current?.present();
+        }
     }
 
     useEffect(() => {
         if (validateResult) {
             if (validateResult?.success) {
-                setStatusText("Transfer success!");
-                bottomSheetModalRef.current?.present();
-
+                onFetchService();
             } else if (!validateResult?.success && validateResult?.error === BiometricAuthFailedResult.BIOMETRIC_AUTHENTICATION_FAILED) {
-                setStatusText("Transfer failed!");
                 bottomSheetModalRef.current?.present();
             }
         }
     }, [validateResult]);
 
-    const onChange = () => { };
 
-    const onValidatePin = useCallback((pin: string) => {
-        if (pin === '111111') { // hardcoded pin to 11111 for now for validation
-            setStatusText("Transfer success!");
+    const onValidatePin = useCallback(async (pin: string) => {
+        if (pin === '111111') { // Note: hardcoded pin to 11111 for now for validation
+            await onFetchService();
         } else {
-            setStatusText("Transfer failed!");
+            bottomSheetModalRef.current?.present();
+
         }
-        bottomSheetModalRef.current?.present();
     }, [pin])
 
     const onPressDone = () => {
-        if (validateResult?.success) {
-            onSuccess && onSuccess();
-        } else {
-            onFailed && onFailed();
-        }
+        onFailed && onFailed();
     }
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            {isLoading && <ActivityIndicator size={'large'} />}
             <InputField title='Enter Pin' value={pin} setValue={(val) => setPin(val)} inputType='number' placeholder='Enter pin' style={{ width: 200 }} onBlur={(val) => onValidatePin(val)} />
             <Pressable onPress={triggerBiometric} style={styles.faceIdContainer}><Image source={require('./../assets/faceID.png')} style={styles.faceId} /></Pressable>
             <BottomSheetModalProvider>
                 <BottomSheetModal
                     ref={bottomSheetModalRef}
-                    onChange={onChange}
                 >
                     <BottomSheetView style={styles.contentContainer}>
-                        <Text style={styles.statusText}>{statusText}</Text>
+                        <Text style={styles.statusText}>{'Transfer failed!'}</Text>
                         <CTAButton text='Done' onPress={onPressDone} isEnabled />
                     </BottomSheetView>
                 </BottomSheetModal>

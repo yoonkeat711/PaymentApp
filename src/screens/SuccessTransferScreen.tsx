@@ -1,36 +1,33 @@
 import React from 'react';
 import { View, Text, SafeAreaView, StyleSheet } from 'react-native';
 import { SuccessTransferScreenProps } from '../../App';
-import moment from 'moment';
 import CTAButton from '../components/CTAButton';
 import Routes from '../navigation/routes';
-import { amountDisplayFormatter } from '../utils/number';
 
 export type SuccessTransferScreenParams = {
-    accountNumber: string;
-    date: Date;
-    amount: string;
+    displayData: {
+        label: string;
+        value: string;
+    }[];
 };
 
 const SuccessTransferScreen = ({ route, navigation }: SuccessTransferScreenProps) => {
-    const { amount, date, accountNumber } = route?.params;
+    const { displayData } = route?.params;
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
                 <Text style={styles.title}>Transfer success</Text>
-                <View style={styles.labelValueContainer}>
-                    <Text style={styles.label}>Account Balance</Text>
-                    <Text style={styles.value}>{amountDisplayFormatter(Number(amount))}</Text>
-                </View>
-                <View style={styles.labelValueContainer}>
-                    <Text style={styles.label}>Account Number</Text>
-                    <Text style={styles.value}>{accountNumber}</Text>
-                </View>
-                <View style={styles.labelValueContainer}>
-                    <Text style={styles.label}>Transaction Date</Text>
-                    <Text style={styles.value}>{moment(date).format("DD MMM YYYY")}</Text>
-                </View>
+                {
+                    displayData.map((item, index) => {
+                        return (
+                            <View style={styles.labelValueContainer} key={`${item?.value}-${index}`}>
+                                <Text style={styles.label}>{item?.label}</Text>
+                                <Text style={styles.value}>{item?.value}</Text>
+                            </View>
+                        )
+                    })
+                }
             </View>
             <CTAButton text='Back to dashboard' onPress={() => { navigation.navigate(Routes.DASHBOARD_SCREEN) }} />
         </SafeAreaView>
@@ -43,7 +40,7 @@ const styles = StyleSheet.create({
         fontSize: 40,
         fontWeight: "700",
         paddingVertical: 40,
-        
+
     },
     container: {
         flex: 1,
