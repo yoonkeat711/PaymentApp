@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, SafeAreaView, View } from 'react-native';
 import AmountCard from '../components/AmountCard';
 import QuickButton from '../components/QuickButton';
@@ -10,20 +10,20 @@ import { amountDisplayFormatter } from '../utils/number';
 import useUserStore from '../stores/userStores';
 import useHistoryStore from '../stores/historyStores';
 import moment from 'moment';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppStackNavigatorParams } from '../../App';
 
 const HISTORY_ITEM_SIZE = 62;
 
+type NavigationProps = StackNavigationProp<AppStackNavigatorParams, Routes.DASHBOARD_SCREEN>;
+
 const DashboardScreen = () => {
-    const navigation = useNavigation();
-    const { setUserInfo, userInfo } = useUserStore();
+    const navigation = useNavigation<NavigationProps>();
+    const { userInfo } = useUserStore();
     const { transactionHistories } = useHistoryStore();
 
-    useEffect(() => {
-        setUserInfo({ name: "Keat", accountBalance: 2233, accountNumber: "111122223333" })
-    }, []);
-
     const onPressTransfer = () => {
-        navigation.navigate(Routes.PAYMENT_SCREEN, {});
+        navigation.navigate(Routes.PAYMENT_SCREEN);
     }
 
     const renderHistoryItem = ({ item }: { item: HistoryDateTypes }) => {
@@ -54,7 +54,6 @@ const DashboardScreen = () => {
                 data={transactionHistories}
                 ListEmptyComponent={<View style={styles.emptyContainer}><Text>No result found.</Text></View>}
                 renderItem={renderHistoryItem}
-                // style={styles.list}
                 estimatedItemSize={HISTORY_ITEM_SIZE}
                 contentContainerStyle={styles.listContentContainer}
             />
@@ -94,9 +93,6 @@ const styles = StyleSheet.create({
     listContentContainer: {
         paddingHorizontal: 24,
         paddingBottom: 24
-    },
-    list: {
-        flex: 1
     },
     transactionDate: {
         fontSize: 14

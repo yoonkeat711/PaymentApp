@@ -1,20 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, SafeAreaView, StyleSheet, Text } from 'react-native';
 import useValidation, { BiometricAuthFailedResult } from '../hooks/useValidation';
-import { useNavigation } from '@react-navigation/native';
-import Routes from '../navigation/routes';
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import CTAButton from '../components/CTAButton';
 import InputField from '../components/InputField';
+import { SecureValidateScreenProps } from '../../App';
 
-type SecureValidateScreenParams = {
+export type SecureValidateScreenParams = {
     onApiCall: () => void;
     onSuccess: () => void;
     onFailed: () => void;
 };
 
-const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidateScreenParams) => {
-    const navigation = useNavigation();
+const SecureValidateScreen = ({ route }: SecureValidateScreenProps) => {
+    const { onApiCall, onSuccess, onFailed } = route?.params;
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [pin, setPin] = useState<string>('');
     const [statusText, setStatusText] = useState<string>('');
@@ -25,18 +24,14 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
         triggerBiometric();
     }, []);
 
-    const onNavigateDashboard = () => {
-        navigation.navigate(Routes.DASHBOARD_SCREEN);
-    }
-
     useEffect(() => {
         if (validateResult) {
             if (validateResult?.success) {
-                setStatusText("Transfer success");
+                setStatusText("Transfer success!");
                 bottomSheetModalRef.current?.present();
 
             } else if (!validateResult?.success && validateResult?.error === BiometricAuthFailedResult.BIOMETRIC_AUTHENTICATION_FAILED) {
-                setStatusText("Transfer failed");
+                setStatusText("Transfer failed!");
                 bottomSheetModalRef.current?.present();
             }
         }
@@ -46,9 +41,9 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
 
     const onValidatePin = (pin: string) => {
         if (pin === '111111') { // hardcoded pin to 11111 for now for validation
-            setStatusText("Transfer success");
+            setStatusText("Transfer success!");
         } else {
-            setStatusText("Transfer failed");
+            setStatusText("Transfer failed!");
         }
         bottomSheetModalRef.current?.present();
     }
@@ -71,8 +66,8 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
                     onChange={onChange}
                 >
                     <BottomSheetView style={styles.contentContainer}>
-                        <Text>{statusText}</Text>
-                        <CTAButton text='Done' onPress={onNavigateDashboard} isEnabled />
+                        <Text style={{ fontWeight: '500', fontSize: 24 }}>{statusText}</Text>
+                        <CTAButton text='Done' onPress={onPressDone} isEnabled />
                     </BottomSheetView>
                 </BottomSheetModal>
             </BottomSheetModalProvider>
@@ -93,7 +88,7 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     faceIdContainer: {
-         paddingTop: 60 
+        paddingTop: 60
     },
     faceId: {
         width: 60,

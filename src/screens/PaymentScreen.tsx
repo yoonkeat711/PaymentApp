@@ -10,16 +10,21 @@ import Routes from '../navigation/routes';
 import CTAButton from '../components/CTAButton';
 import useHistoryStore from '../stores/historyStores';
 import { TransferType } from '../constants/types';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AppStackNavigatorParams } from '../../App';
+
+type NavigationProps = StackNavigationProp<AppStackNavigatorParams, Routes.PAYMENT_SCREEN>;
 
 const PaymentScreen = () => {
-    const { userInfo } = useUserStore();
-    const { setTransactionHistories, transactionHistories } = useHistoryStore();
+    const { userInfo, setUserInfo } = useUserStore();
+    const { transactionHistories } = useHistoryStore();
+
     const [amount, setAmount] = useState<string>('');
     const [isAmountError, setIsAmountEror] = useState<boolean>(false);
     const [accountNumber, setAccountNumber] = useState<string>('');
     const [note, setNote] = useState<string>('');
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProps>();
 
     const amountValidationScheme = Yup.string()
         .required('Amount is required.')
@@ -43,15 +48,19 @@ const PaymentScreen = () => {
     };
 
     const onSuccessTransfer = () => {
-        const updatedTransactionList = transactionHistories.unshift({
+
+        setUserInfo({
+            ...userInfo,
+            accountBalance: userInfo?.accountBalance - parseFloat(amount),
+        });
+
+         transactionHistories.unshift({
             date: new Date(),
             title: 'Transfer',
             amount: parseFloat(amount),
             accountNumber: Number(accountNumber),
             transferType: TransferType.DEBIT,
         });
-        console.log(updatedTransactionList, 'list');
-        // setTransactionHistories(updatedTransactionList);
         navigation.navigate(Routes.DASHBOARD_SCREEN);
     }
 
