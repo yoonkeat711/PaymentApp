@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, SafeAreaView, View } from 'react-native';
 import AmountCard from '../components/AmountCard';
 import QuickButton from '../components/QuickButton';
@@ -30,26 +30,22 @@ const DashboardScreen = () => {
         navigation.navigate(Routes.PAYMENT_SCREEN, {
             accountNumber: String(data?.accountNumber),
         });
-
     }
 
-    const renderHistoryItem = ({ item }: { item: HistoryDateTypes }) => {
+    const renderHistoryItem = useCallback(({ item }: { item: HistoryDateTypes }) => {
         return (
             <View style={styles.historyContainer}>
-                <View style={{ justifyContent: 'space-between' }}>
+                <View style={styles.leftHistorySubcontainer}>
                     <Text style={styles.transactionDate}>{moment(item?.date).format("DD MMM YYYY")}</Text>
                     <Text style={styles.transactionListTitle}>{item?.title}</Text>
                 </View>
-                <View style={{ flexDirection: "row" }}>
+                <View style={styles.rightHistorySubcontainer}>
                     <Text style={[styles.transactionAmount, { color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
-
                     <QuickButton icon={require('./../assets/payment.png')} onPress={() => onPressQuickTransfer(item)} />
-
                 </View>
-
             </View>
         )
-    }
+    }, [transactionHistories]);
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -126,6 +122,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 300,
         justifyContent: 'center'
+    },
+    leftHistorySubcontainer: {
+         justifyContent: 'space-between',
+    },
+    rightHistorySubcontainer: {
+        flexDirection: "row",
     }
 
 })

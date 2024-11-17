@@ -4,10 +4,10 @@ import COLORS from '../constants/colors';
 
 type CTAButtonProps = {
     text: string;
-    isEnabled: boolean;
+    isEnabled?: boolean;
     onPress: () => void;
 }
-const CTAButton = ({ text, isEnabled, onPress }: CTAButtonProps) => {
+const CTAButton = ({ text, isEnabled = true, onPress }: CTAButtonProps) => {
     return (
         <Pressable onPress={onPress} style={[styles.buttonContainer, { backgroundColor: isEnabled ? COLORS.PRIMARY : COLORS.DISABLED }]} disabled={!isEnabled}>
             <Text style={styles.buttonText}>{text}</Text>

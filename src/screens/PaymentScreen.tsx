@@ -4,7 +4,6 @@ import InputField from '../components/InputField';
 import AmountCard from '../components/AmountCard';
 import useUserStore from '../stores/userStores';
 import * as Yup from 'yup';
-import DropDownField from '../components/DropDownField';
 import { useNavigation } from '@react-navigation/native';
 import Routes from '../navigation/routes';
 import CTAButton from '../components/CTAButton';
@@ -27,7 +26,7 @@ const PaymentScreen = ({ route }: PaymentScreenProps) => {
 
     const [amount, setAmount] = useState<string>('');
     const [isAmountError, setIsAmountEror] = useState<boolean>(false);
-    const [accountNumber, setAccountNumber] = useState<string>(route?.params?.accountNumber ?? '' );
+    const [accountNumber, setAccountNumber] = useState<string>(route?.params?.accountNumber ?? '');
     const [note, setNote] = useState<string>('');
     const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
     const navigation = useNavigation<NavigationProps>();
@@ -115,8 +114,6 @@ const PaymentScreen = ({ route }: PaymentScreenProps) => {
                             placeholder='Enter note (optional)'
                         />
                     </KeyboardAvoidingView>
-
-                    {/* <DropDownField title="Transfer type" value='' placeholder='Select transfer type' options={[{ title: "Mobile number", value: "mobileNumber"}, { title: "Account number", value: "accountNumber" }]}  /> */}
                 </ScrollView>
             </TouchableWithoutFeedback>
             <CTAButton
