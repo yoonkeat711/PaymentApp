@@ -1,3 +1,5 @@
+
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
@@ -45,7 +47,37 @@ This is one way to run your app — you can also run it directly from within And
 - Break screen into component so that some component could be reuse in other screen.
 
 ### Challenges
-- Not little more time, 3 days given, Friday got the assesment, Sat afternoon starts the development, maybe I am not efficient and should start even earlier
+- Need little more time, 3 days given, Friday got the assesment, Sat afternoon starts the development, maybe I am not efficient and should start even earlier :)
 
 ### Video
+
+Happy flow (biometric enrolled)
+
+https://github.com/user-attachments/assets/c09a45e5-9d6c-4b74-a0b0-03cebe6ac8ff
+
+
+Biometric not enrolled
+
+https://github.com/user-attachments/assets/f9f85baa-31c8-4af3-8179-579feb110f1f
+
+
+Fallback PIN success
+
+https://github.com/user-attachments/assets/1d1db8d6-c843-4ee7-8d72-05bc11d38927
+
+
+Fallback PIN failed
+
+
+
+https://github.com/user-attachments/assets/0e187814-63d6-4fc0-9619-3ec0183b6d97
+
+
+
+Quick Pay from transaction
+
+https://github.com/user-attachments/assets/d78a37f4-4e6b-46f8-9d7b-f8c45ef1514a
+
+
+
 
