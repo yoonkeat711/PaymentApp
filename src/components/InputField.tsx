@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Text, StyleSheet, StyleProp, TextStyle } from 'react-native';
 import * as Yup from 'yup';
 
 type InputFieldProps = {
@@ -10,9 +10,11 @@ type InputFieldProps = {
     setValue: (val: string) => void;
     validationSchema?: Yup.AnySchema<any> | undefined;
     onError?: (val: boolean) => void;
+    style?: StyleProp<TextStyle>;
+    onSubmit?: (val: string) => void;
 
 }
-const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder, onError }: InputFieldProps) => {
+const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder, onError, style, onSubmit }: InputFieldProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     const keyboardType = () => {
@@ -47,15 +49,22 @@ const InputField = ({ title, value, validationSchema, inputType, setValue, place
 
         }
     }
+
+    const onSubmitHere = (h) => {
+        console.log(h,'d');
+    }
     return (
         <View>
             <Text style={styles.title}>{title}</Text>
             <TextInput
-                style={[styles.inputField, { borderColor: errorMessage ? 'red' : "grey" }]}
+                // onSubmitEditing={  (e) => onSubmit && onSubmit(e.nativeEvent.text)}
+                onSubmitEditing={onSubmitHere}
+                style={[styles.inputField, { borderColor: errorMessage ? 'red' : "grey" }, style]}
                 value={value}
                 onChangeText={setValue}
                 keyboardType={keyboardType()}
                 placeholder={placeholder}
+                returnKeyType='done'
             />
             {!!errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>

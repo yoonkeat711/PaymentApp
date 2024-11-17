@@ -9,7 +9,7 @@ import { HistoryDateTypes, TransferType } from '../constants/types';
 import { amountDisplayFormatter } from '../utils/number';
 import useUserStore from '../stores/userStores';
 import useHistoryStore from '../stores/historyStores';
-// import { TransferType } from '../constants/types';
+import moment from 'moment';
 
 const HISTORY_ITEM_SIZE = 62;
 
@@ -26,37 +26,10 @@ const DashboardScreen = () => {
         navigation.navigate(Routes.PAYMENT_SCREEN, {});
     }
 
-    // const mockHistoryData: HistoryDateTypes[] = [
-    //     {
-    //         date: "16 Nov 2022",
-    //         title: "Transfer 1",
-    //         amount: 200,
-    //         transferType: TransferType.CREDIT,
-    //     },
-    //     {
-    //         date: "14 Nov 2022",
-    //         title: "Transfer 2",
-    //         amount: 400,
-    //         transferType: TransferType.DEBIT,
-    //     },
-    //     {
-    //         date: "14 Nov 2022",
-    //         title: "Transfer 2",
-    //         amount: 400,
-    //         transferType: TransferType.DEBIT,
-    //     },
-    //     {
-    //         date: "14 Nov 2022",
-    //         title: "Transfer 2",
-    //         amount: 400,
-    //         transferType: TransferType.DEBIT,
-    //     },
-    // ];
-
     const renderHistoryItem = ({ item }: { item: HistoryDateTypes }) => {
         return (
             <View style={styles.historyContainer}>
-                <Text style={styles.transactionDate}>{item?.date}</Text>
+                <Text style={styles.transactionDate}>{moment(item?.date).format("DD MMM YYYY")}</Text>
                 <View style={styles.transactionDetail}>
                     <Text style={styles.transactionListTitle}>{item?.title}</Text>
                     <Text style={[styles.transactionAmount, { color: item?.transferType === TransferType.DEBIT ? "red" : "green" }]}>{`${item?.transferType === TransferType.DEBIT ? '- ' : ''} ${amountDisplayFormatter(item?.amount)}`}</Text>
@@ -81,7 +54,7 @@ const DashboardScreen = () => {
                 data={transactionHistories}
                 ListEmptyComponent={<View style={styles.emptyContainer}><Text>No result found.</Text></View>}
                 renderItem={renderHistoryItem}
-                style={styles.list}
+                // style={styles.list}
                 estimatedItemSize={HISTORY_ITEM_SIZE}
                 contentContainerStyle={styles.listContentContainer}
             />

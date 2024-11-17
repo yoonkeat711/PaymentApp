@@ -4,7 +4,7 @@ export enum  TransferType {
 };
 
 export type HistoryDateTypes = {
-    date: string;
+    date: Date;
     title: string;
     amount: number;
     accountNumber: number;

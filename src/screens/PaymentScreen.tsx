@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, Image, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { Keyboard, SafeAreaView, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, Image, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import InputField from '../components/InputField';
 import AmountCard from '../components/AmountCard';
 import useUserStore from '../stores/userStores';
 import * as Yup from 'yup';
-import COLORS from '../constants/colors';
 import DropDownField from '../components/DropDownField';
 import { useNavigation } from '@react-navigation/native';
+import Routes from '../navigation/routes';
+import CTAButton from '../components/CTAButton';
+import useHistoryStore from '../stores/historyStores';
+import { TransferType } from '../constants/types';
 
 const PaymentScreen = () => {
     const { userInfo } = useUserStore();
+    const { setTransactionHistories, transactionHistories } = useHistoryStore();
     const [amount, setAmount] = useState<string>('');
     const [isAmountError, setIsAmountEror] = useState<boolean>(false);
     const [accountNumber, setAccountNumber] = useState<string>('');
@@ -31,7 +35,31 @@ const PaymentScreen = () => {
         );
 
     const onPressTransfer = () => {
+        navigation.navigate(Routes.SECURE_VALIDATE_SCREEN, {
+            onApiCall: onFetchPayment,
+            onSuccess: onSuccessTransfer,
+            onFailed: onFailedTransfer,
+        });
     };
+
+    const onSuccessTransfer = () => {
+        const updatedTransactionList = transactionHistories.unshift({
+            date: new Date(),
+            title: 'Transfer',
+            amount: parseFloat(amount),
+            accountNumber: Number(accountNumber),
+            transferType: TransferType.DEBIT,
+        });
+        console.log(updatedTransactionList, 'list');
+        // setTransactionHistories(updatedTransactionList);
+        navigation.navigate(Routes.DASHBOARD_SCREEN);
+    }
+
+    const onFailedTransfer = () => {
+        navigation.navigate(Routes.DASHBOARD_SCREEN);
+    };
+
+    const onFetchPayment = () => { }
 
     useEffect(() => {
         if (amount && accountNumber && !isAmountError) {
@@ -43,8 +71,8 @@ const PaymentScreen = () => {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <TouchableOpacity onPress={()=> navigation.goBack()}>
-            <Image source={require('./../assets/arrowLeft.png')} style={styles.backButton} />
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Image source={require('./../assets/arrowLeft.png')} style={styles.backButton} />
             </TouchableOpacity>
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
                 <ScrollView style={styles.topContainer}>
@@ -76,10 +104,12 @@ const PaymentScreen = () => {
                     {/* <DropDownField title="Transfer type" value='' placeholder='Select transfer type' options={[{ title: "Mobile number", value: "mobileNumber"}, { title: "Account number", value: "accountNumber" }]}  /> */}
                 </ScrollView>
             </TouchableWithoutFeedback>
+            <CTAButton
+                text='Transfer'
+                onPress={onPressTransfer}
+                isEnabled={isButtonEnabled}
+            />
 
-            <Pressable onPress={onPressTransfer} style={[styles.buttonContainer, { backgroundColor: isButtonEnabled ? COLORS.PRIMARY : COLORS.DISABLED }]} disabled={!isButtonEnabled}>
-                <Text style={styles.buttonText}>Transfer</Text>
-            </Pressable>
         </SafeAreaView>
     )
 };
@@ -92,18 +122,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: '500'
     },
-    buttonContainer: {
-        margin: 20,
-        backgroundColor: COLORS.PRIMARY,
-        padding: 20,
-        alignItems: 'center',
-        borderRadius: 30
-    },
-    buttonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: '500'
-    },
+
     topContainer: {
         padding: 24,
         flex: 1,
