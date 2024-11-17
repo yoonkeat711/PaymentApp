@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
-import ReactNativeBiometrics from 'react-native-biometrics';
-import useValidation from '../hooks/useValidation';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, Pressable, SafeAreaView, StyleSheet, Text } from 'react-native';
+import useValidation, { BiometricAuthFailedResult } from '../hooks/useValidation';
+import { useNavigation } from '@react-navigation/native';
 import Routes from '../navigation/routes';
 import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import CTAButton from '../components/CTAButton';
@@ -22,15 +21,9 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
 
     const { triggerBiometric, validateResult } = useValidation();
 
-    // useFocusEffect(() => {
-    //     triggerBiometric();
-    // }, []);
-
-    useFocusEffect(useCallback(() => {
+    useEffect(() => {
         triggerBiometric();
-    }, []));
-
-
+    }, []);
 
     const onNavigateDashboard = () => {
         navigation.navigate(Routes.DASHBOARD_SCREEN);
@@ -42,7 +35,7 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
                 setStatusText("Transfer success");
                 bottomSheetModalRef.current?.present();
 
-            } else if (!validateResult?.success && validateResult?.error === 'Authentication failed' ) {
+            } else if (!validateResult?.success && validateResult?.error === BiometricAuthFailedResult.BIOMETRIC_AUTHENTICATION_FAILED) {
                 setStatusText("Transfer failed");
                 bottomSheetModalRef.current?.present();
             }
@@ -52,7 +45,12 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
     const onChange = () => { };
 
     const onValidatePin = (pin: string) => {
-        console.log(pin, 'on');
+        if (pin === '111111') { // hardcoded pin to 11111 for now for validation
+            setStatusText("Transfer success");
+        } else {
+            setStatusText("Transfer failed");
+        }
+        bottomSheetModalRef.current?.present();
     }
 
     const onPressDone = () => {
@@ -65,7 +63,8 @@ const SecureValidateScreen = ({ onApiCall, onSuccess, onFailed }: SecureValidate
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <InputField title='Enter Pin' value={pin} setValue={(val) => setPin(val)} inputType='number' placeholder='Enter pin' style={{ width: 200 }} onSubmit={(val) => onValidatePin(val)} />
+            <InputField title='Enter Pin' value={pin} setValue={(val) => setPin(val)} inputType='number' placeholder='Enter pin' style={{ width: 200 }} onBlur={(val) => onValidatePin(val)} />
+            <Pressable onPress={triggerBiometric} style={styles.faceIdContainer}><Image source={require('./../assets/faceID.png')} style={styles.faceId} /></Pressable>
             <BottomSheetModalProvider>
                 <BottomSheetModal
                     ref={bottomSheetModalRef}
@@ -93,6 +92,14 @@ const styles = StyleSheet.create({
         height: 150,
         width: '100%'
     },
+    faceIdContainer: {
+         paddingTop: 60 
+    },
+    faceId: {
+        width: 60,
+        height: 60,
+        resizeMode: 'contain'
+    }
 })
 
 export default SecureValidateScreen;

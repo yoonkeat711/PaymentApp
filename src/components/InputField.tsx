@@ -11,10 +11,10 @@ type InputFieldProps = {
     validationSchema?: Yup.AnySchema<any> | undefined;
     onError?: (val: boolean) => void;
     style?: StyleProp<TextStyle>;
-    onSubmit?: (val: string) => void;
+    onBlur?: (val: string) => void;
 
 }
-const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder, onError, style, onSubmit }: InputFieldProps) => {
+const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder, onError, style, onBlur }: InputFieldProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
     const keyboardType = () => {
@@ -50,21 +50,19 @@ const InputField = ({ title, value, validationSchema, inputType, setValue, place
         }
     }
 
-    const onSubmitHere = (h) => {
-        console.log(h,'d');
-    }
+ 
     return (
         <View>
             <Text style={styles.title}>{title}</Text>
             <TextInput
                 // onSubmitEditing={  (e) => onSubmit && onSubmit(e.nativeEvent.text)}
-                onSubmitEditing={onSubmitHere}
+                onBlur={(e) => onBlur && onBlur(e.nativeEvent.text)}
                 style={[styles.inputField, { borderColor: errorMessage ? 'red' : "grey" }, style]}
                 value={value}
                 onChangeText={setValue}
                 keyboardType={keyboardType()}
                 placeholder={placeholder}
-                returnKeyType='done'
+                returnKeyType='next'
             />
             {!!errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>

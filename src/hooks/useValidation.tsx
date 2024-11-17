@@ -7,6 +7,12 @@ type ValidateResult = {
     success: boolean;
     error?: string;
 }
+
+export enum BiometricAuthFailedResult {
+    BIOMETRIC_NOT_ENROLLED_OR_UNAVAILABLE = 'Biometric authentication is not available or not enrolled',
+    BIOMETRIC_AUTHENTICATION_FAILED = 'Authentication failed',
+};
+
 const useValidation = () => {
     const rnBiometrics = new ReactNativeBiometrics();
     const [isBiometricAvailable, setIsBiometricAvailable] = useState<boolean>(false);
@@ -25,7 +31,7 @@ const useValidation = () => {
                 setIsBiometricAvailable(false);
                 setValidateResult({
                     success: false,
-                    error: 'Biometric authentication is not available or not enrolled.',
+                    error: BiometricAuthFailedResult.BIOMETRIC_NOT_ENROLLED_OR_UNAVAILABLE,
                 });
             }
         })
@@ -41,11 +47,11 @@ const useValidation = () => {
                 if (success) {
                     setValidateResult({ success: true });
                 } else {
-                    setValidateResult({ success: false, error: 'Authentication failed' });
+                    setValidateResult({ success: false, error: BiometricAuthFailedResult.BIOMETRIC_AUTHENTICATION_FAILED });
                 }
             })
             .catch((error) => {
-                setValidateResult({ success: false, error: 'Authentication failed' });
+                setValidateResult({ success: false, error: BiometricAuthFailedResult.BIOMETRIC_AUTHENTICATION_FAILED });
             });
     };
 
