@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import Routes from '../navigation/routes';
 import { FlashList } from '@shopify/flash-list';
 import { HistoryDateTypes, TransferType } from '../constants/types';
-import { accountNumberFormatter, amountDisplayFormatter } from '../utils/number';
+import { amountDisplayFormatter } from '../utils/number';
 import useUserStore from '../stores/userStores';
 // import { TransferType } from '../constants/types';
 
@@ -68,7 +68,7 @@ const DashboardScreen = () => {
             <View style={styles.container}>
                 <Text style={styles.title}>{`Yo, ${userInfo?.name}`}</Text>
 
-                <AmountCard amount={userInfo?.accountBalance} accountNumber={accountNumberFormatter(userInfo?.accountNumber)} />
+                <AmountCard amount={userInfo?.accountBalance} accountNumber={userInfo?.accountNumber} />
                 <View style={styles.quickButtonContainer}>
                     <QuickButton icon={require('./../assets/payment.png')} text='Transfer' onPress={onPressTransfer} />
                 </View>

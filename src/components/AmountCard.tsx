@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { amountDisplayFormatter } from '../utils/number';
+import { accountNumberFormatter, amountDisplayFormatter } from '../utils/number';
+import COLORS from '../constants/colors';
 
 type AmountCardProps = {
     amount: number;
@@ -13,14 +14,14 @@ const AmountCard = ({ amount, accountNumber }: AmountCardProps) => {
             <Text style={styles.title}>Amount: </Text>
             <Text style={styles.amount}>{amountDisplayFormatter(amount)}</Text>
             <Text style={styles.title}>Account Number: </Text>
-            <Text style={styles.accountNumber}>{accountNumber}</Text>
+            <Text style={styles.accountNumber}>{accountNumberFormatter(accountNumber)}</Text>
         </View>
     )
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#89CFF0',
+        backgroundColor: COLORS.PRIMARY,
         borderRadius: 20,
         padding: 20,
         marginVertical: 20

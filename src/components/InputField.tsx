@@ -1,31 +1,78 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-
+import * as Yup from 'yup';
 
 type InputFieldProps = {
     title: string;
+    inputType: 'string' | 'number' | 'amount';
     placeholder: string;
     value: string;
-    validationSchema?: object;
+    setValue: (val: string) => void;
+    validationSchema?: Yup.AnySchema<any> | undefined;
 
 }
-const InputField = ({ title, value, validationSchema }: InputFieldProps) => {
-  const [errorMessage, setErrorMessage] = useState<string>('');
+const InputField = ({ title, value, validationSchema, inputType, setValue, placeholder }: InputFieldProps) => {
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
+    const keyboardType = () => {
+        switch (inputType) {
+            case 'string': return 'default';
+            case 'number': return 'numeric';
+            case 'amount': return 'decimal-pad';
+            default: return 'default';
+        }
+    };
+
+    useEffect(() => {
+        if (validationSchema && value) {
+            validateScheme();
+        }
+    }, [value]);
+
+    const validateScheme = async () => {
+        try {
+            setErrorMessage('');
+            await validationSchema?.validate(value);
+        } catch (error: unknown) {
+            if (error instanceof Yup.ValidationError) {
+                setErrorMessage(error?.message);
+            }
+            else {
+                setErrorMessage("Unknown error");
+            }
+
+        }
+    }
     return (
         <View>
-            <Text style={{fontWeight: "500"}}>{title}</Text>
+            <Text style={styles.title}>{title}</Text>
             <TextInput
-                style={styles.inputField}
+                style={[styles.inputField, { borderColor: errorMessage ? 'red' : "grey" }]}
                 value={value}
+                onChangeText={setValue}
+                keyboardType={keyboardType()}
+                placeholder={placeholder}
             />
-            {!!errorMessage && <Text>{errorMessage}</Text>}
+            {!!errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     inputField: {
-        borderRadius: 4,
+        borderRadius: 20,
+        fontSize: 20,
+        borderWidth: 1,
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+    },
+    title: {
+        fontWeight: "500",
+        fontSize: 24
+    },
+    errorMessage: {
+        color: 'red',
+        paddingTop: 4
     }
 })
 
